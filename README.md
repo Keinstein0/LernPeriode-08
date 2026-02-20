@@ -3,6 +3,9 @@ In diesem Projekt werde ich mittels neuer technologien eine Webapp bauen. Für d
 
 Je nach dem werde ich übrige zeit auf die entwicklung eines anderen Backends setzen.
 
+Für Svelte verwende ich das folgende Tutorial: https://svelte.dev/tutorial/svelte/welcome-to-svelte
+Und für ASP.NET sowie EF verwende ich generelles googeling und recherche
+
 ## 20.2.26
 - [ ] Hello world implementieren
 - [ ] Hello world bereitmachen zur ausführung mit Docker/DockerCompose
