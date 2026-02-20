@@ -30,5 +30,11 @@ namespace MusicBackend.Controllers
             })
             .ToArray();
         }
+
+        [HttpGet("idk")]
+        public string GetSelf()
+        {
+            return "ASP.NET";
+        }
     }
 }

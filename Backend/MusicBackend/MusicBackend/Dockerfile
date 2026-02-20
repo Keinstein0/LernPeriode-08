@@ -12,10 +12,9 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["MusicBackend/MusicBackend.csproj", "MusicBackend/"]
-RUN dotnet restore "./MusicBackend/MusicBackend.csproj"
+COPY ["MusicBackend.csproj", "./"]
+RUN dotnet restore "MusicBackend.csproj"
 COPY . .
-WORKDIR "/src/MusicBackend"
 RUN dotnet build "./MusicBackend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
@@ -25,6 +24,9 @@ RUN dotnet publish "./MusicBackend.csproj" -c $BUILD_CONFIGURATION -o /app/publi
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+USER root
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+USER $APP_UID
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "MusicBackend.dll"]
