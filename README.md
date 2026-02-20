@@ -7,6 +7,7 @@ Für Svelte verwende ich das folgende Tutorial: https://svelte.dev/tutorial/svel
 Und für ASP.NET sowie EF verwende ich generelles googeling und recherche
 
 ## 20.2.26
-- [ ] Hello world implementieren
-- [ ] Hello world bereitmachen zur ausführung mit Docker/DockerCompose
+- [X] Hello world implementieren
+- [X] Hello world bereitmachen zur ausführung mit Docker/DockerCompose
 
+Krank.
