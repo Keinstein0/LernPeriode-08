@@ -9,6 +9,7 @@ Und für ASP.NET sowie EF verwende ich generelles googeling und recherche
 ## 20.2.26
 - [X] Hello world implementieren
 - [X] Hello world bereitmachen zur ausführung mit Docker/DockerCompose
+
 Krank.
 
 - [ ] Reviewen was ich gemacht habe und ob das was ich gemacht habe gut ist
