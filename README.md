@@ -6,6 +6,9 @@ Je nach dem werde ich übrige zeit auf die entwicklung eines anderen Backends se
 Für Svelte verwende ich das folgende Tutorial: https://svelte.dev/tutorial/svelte/welcome-to-svelte
 Und für ASP.NET sowie EF verwende ich generelles googeling und recherche
 
+![datenmodell](image.png)
+
+
 ## 20.2.26
 - [X] Hello world implementieren
 - [X] Hello world bereitmachen zur ausführung mit Docker/DockerCompose
