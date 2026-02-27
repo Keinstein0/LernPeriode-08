@@ -13,7 +13,7 @@ Und für ASP.NET sowie EF verwende ich generelles googeling und recherche
 Krank.
 
 ## 17.2.26
-- [ ] Reviewen was ich gemacht habe und ob das was ich gemacht habe gut ist
-- [ ] Online Tutorial zu Svelte weiterarbeiten
-- [ ] Planen der Endpunkte
-- [ ] Planen der Datenbank
+- [ ] Planen der HTTP endpunkte
+- [ ] Planen des Datenmodelles
+- [ ] Implementierung von Controllern und rohimplementierung
+- [ ] Implementierung von Auth mit JWT
