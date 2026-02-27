@@ -16,6 +16,8 @@ builder.Services.AddCors(options =>
         });
 });
 
+
+
 var connectionString = builder.Configuration.GetConnectionString("DebugConnection");
 var serverVersion = ServerVersion.AutoDetect(connectionString);
 
