@@ -1,4 +1,4 @@
-﻿namespace MusicBackend.Models
+﻿namespace MusicBackend.Models.DataLayer
 {
     public class Song
     {
