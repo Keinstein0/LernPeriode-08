@@ -16,7 +16,14 @@ Und für ASP.NET sowie EF verwende ich generelles googeling und recherche
 Krank.
 
 ## 17.2.26
-- [ ] Planen der HTTP endpunkte
-- [ ] Planen des Datenmodelles
+- [X] Planen der HTTP endpunkte
+- [X] Planen des Datenmodelles
 - [ ] Implementierung von Controllern und rohimplementierung
 - [ ] Implementierung von Auth mit JWT
+
+Ich konnte heute das  Datenmodell sowie weitere konzepte (Auth) sehr gut Ausplanen. Vielleicht werde ich doch ein wenig mehr zeit fürs Backend brauchen als erwartet. Am idealsten könnte ich die Authentifizierung und Autorisierung bis zum nächsten mal umsetzen.
+## 6.3.26
+- [ ] Umsetzung Login
+- [ ] Umsetzung erneuerung des Tokens
+- [ ] Umsetzung instant revoke des Tokens
+- [ ] Kommunikation mit Neo zur Authentifikation im S23 Eimer
