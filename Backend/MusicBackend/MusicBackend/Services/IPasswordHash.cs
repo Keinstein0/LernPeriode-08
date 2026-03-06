@@ -1,4 +1,4 @@
-﻿namespace HPlusSportAPI.Services
+﻿namespace MusicBackend.Services
 {
     public interface IPasswordHash
     {

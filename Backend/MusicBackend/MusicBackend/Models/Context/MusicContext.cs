@@ -2,7 +2,7 @@
 using MusicBackend.Models.DataLayer;
 using MusicBackend.Models;
 
-namespace HPlusSportAPI.Models
+namespace MusicBackend.Models
 {
     public class MusicContext : DbContext
     {
@@ -16,11 +16,16 @@ namespace HPlusSportAPI.Models
                 .WithOne(playlist => playlist.Owner)
                 .HasForeignKey(playlist => playlist.OwnerId);
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username) //unique username
+                .IsUnique();
+
             //N:M
             modelBuilder.Entity<Playlist>()
                 .HasMany(playlist => playlist.Songs)
                 .WithMany(song => song.playlists);
         }
+
 
         public DbSet<User> Users { get; set; } 
         public DbSet<Song> Songs { get; set; }

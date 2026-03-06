@@ -1,11 +1,14 @@
-﻿using JWTwebapp.Datamodels;
+﻿using MusicBackend.Models.Data;
+using MusicBackend.Models.Data.User;
+using MusicBackend.Models.DataLayer;
 
-namespace HPlusSportAPI.Services
+namespace MusicBackend.Services
 {
     public interface ITokenGenerator
     {
-        public string GenerateAccessToken(User user);
-        public RefreshToken GenerateRefreshToken();
+        public Task<string> GenerateAccessToken(User user);
+        public Task<RefreshToken> GenerateRefreshToken();
+        public Task SetRefreshToken(RefreshToken newRefreshToken, HttpResponse Response);
+        public Task<ClaimData> GetClaims(System.Security.Claims.ClaimsPrincipal user);
     }
-
 }

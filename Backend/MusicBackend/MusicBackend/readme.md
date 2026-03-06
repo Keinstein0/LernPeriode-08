@@ -11,7 +11,7 @@
 
 ---------------
 
-#### PUT /auth/{uid}
+#### PUT /auth/{uid} *(#IsSuper)*
 ```
 {
     username : username,
