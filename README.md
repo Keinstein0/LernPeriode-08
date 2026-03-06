@@ -23,7 +23,13 @@ Krank.
 
 Ich konnte heute das  Datenmodell sowie weitere konzepte (Auth) sehr gut Ausplanen. Vielleicht werde ich doch ein wenig mehr zeit fürs Backend brauchen als erwartet. Am idealsten könnte ich die Authentifizierung und Autorisierung bis zum nächsten mal umsetzen.
 ## 6.3.26
-- [ ] Umsetzung Login
-- [ ] Umsetzung erneuerung des Tokens
-- [ ] Umsetzung instant revoke des Tokens
-- [ ] Kommunikation mit Neo zur Authentifikation im S23 Eimer
+- [X] Umsetzung Login
+- [X] Umsetzung erneuerung des Tokens
+- [X] Umsetzung instant revoke des Tokens
+- [X] Kommunikation mit Neo zur Authentifikation im S23 Eimer
+Heute konnte ich alle meine Ziele erreichen. Ich werde vielleicht unter der woche die weiteren endpunkte einmal Temporär so implementieren dass bis zur nächsten LP die endpunkte einmal soweit implementiert sind dass ich mit der Umsetzung des Frontends beginnen kann. 
+## 13.3.26
+- [ ] Backend rohimplementation (noch nicht allzuviel logik)
+- [ ] Frontend struktur geplant
+- [ ] Frontend login seite fertig (mit API)
+- [ ] Frontend user übersicht mit Account editoren fertig
