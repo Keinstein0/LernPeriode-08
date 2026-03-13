@@ -27,9 +27,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSvelte",
         policy =>
         {
-            policy.WithOrigins("http://localhost:8080") // Your frontend URL
+            policy.WithOrigins("http://localhost:5173")
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+                    
         });
 });
 
@@ -115,12 +117,6 @@ using (var scope = app.Services.CreateScope())
 
 }
 
-
-app.UseCors("AllowSvelte");
-
-app.MapHealthChecks("/health");
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -128,10 +124,19 @@ if (app.Environment.IsDevelopment())
 }
 
 
+app.UseRouting();
+app.UseCors("AllowSvelte");
+
+
+// Configure the HTTP request pipeline.
+
+
 //app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHealthChecks("/health");
 app.MapControllers();
 
 using (var scope = app.Services.CreateScope())

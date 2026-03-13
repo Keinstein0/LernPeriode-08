@@ -100,7 +100,7 @@ namespace MusicBackend.Controllers
 
             if (songRequest.Thumbnail != null)
             {
-                string url = await _bucketInterface.UploadThumbnail(songRequest.Thumbnail, id);
+                string url = await _bucketInterface.UpdateThumbnail(songRequest.Thumbnail, id);
                 song.ThumbnailUrl = url;
             }
             await _context.SaveChangesAsync();

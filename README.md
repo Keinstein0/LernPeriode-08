@@ -29,7 +29,14 @@ Ich konnte heute das  Datenmodell sowie weitere konzepte (Auth) sehr gut Ausplan
 - [X] Kommunikation mit Neo zur Authentifikation im S23 Eimer
 Heute konnte ich alle meine Ziele erreichen. Ich werde vielleicht unter der woche die weiteren endpunkte einmal Temporär so implementieren dass bis zur nächsten LP die endpunkte einmal soweit implementiert sind dass ich mit der Umsetzung des Frontends beginnen kann. 
 ## 13.3.26
-- [ ] Backend rohimplementation (noch nicht allzuviel logik)
-- [ ] Frontend struktur geplant
-- [ ] Frontend login seite fertig (mit API)
+- [X] Backend rohimplementation (noch nicht allzuviel logik)
+- [X] Frontend struktur geplant
+- [X] Frontend login seite fertig (mit API)
 - [ ] Frontend user übersicht mit Account editoren fertig
+Heute konnte ich mich weiter in Svelte hineinarbeiten und zudem das Login des Frontends fertig stellen. Bis zum nächsten Mal werde ich unter der Woche weiter am Backend arbeiten und dann mit der Implementation der grobstruktur sowie der User Übersicht/Editoren arbeiten
+
+## 20.3.26
+- [ ] Backend Playlists rohimplementiert
+- [ ] Frontend Hauptseite sichtbar
+- [ ] Frontend nutzerliste sichtbar
+- [ ] Frontend nutzereditor(en) fertig

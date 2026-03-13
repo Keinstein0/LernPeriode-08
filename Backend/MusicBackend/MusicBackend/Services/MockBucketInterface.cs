@@ -1,16 +1,42 @@
 ﻿
+
 namespace MusicBackend.Services
 {
     public class MockBucketInterface : IBucketInterface
     {
-        public Task UploadMusic()
+        async public Task DeleteResource(string url)
         {
-            return null;
+            
         }
 
-        public Task UploadThumbnail(FileStream thumbnail)
+        async public Task<string> GetAuthorisationForFile(string url)
         {
-            return null;
+            return "12345";
+        }
+
+        async public Task<string> UpdateThumbnail(IFormFile stream, string id)
+        {
+            return "https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg";
+        }
+
+        async public Task UploadMusic()
+        {
+            
+        }
+
+        async public Task<string> UploadMusic(IFormFile stream, string id)
+        {
+            return "https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg";
+        }
+
+        async public Task UploadThumbnail(FileStream thumbnail)
+        {
+            
+        }
+
+        async public Task<string> UploadThumbnail(IFormFile stream, string id)
+        {
+            return "https://upload.wikimedia.org/wikipedia/commons/f/f9/Phoenicopterus_ruber_in_S%C3%A3o_Paulo_Zoo.jpg";
         }
     }
 }
