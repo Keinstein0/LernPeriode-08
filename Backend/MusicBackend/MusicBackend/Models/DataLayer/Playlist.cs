@@ -9,6 +9,7 @@
         // Ownership
         public required User Owner { get; set; }
         public string? OwnerId { get; set; }
-        public ICollection<Song>? Songs { get; set; } = null;
+        public ICollection<Song> Songs { get; } = new List<Song>();
+        public ICollection<PlaylistSong> PlaylistSongs { get; } = new List<PlaylistSong>();
     }
 }

@@ -12,8 +12,8 @@ using MusicBackend.Models;
 namespace MusicBackend.Migrations
 {
     [DbContext(typeof(MusicContext))]
-    [Migration("20260306080017_AddedRefreshTokens")]
-    partial class AddedRefreshTokens
+    [Migration("20260309120147_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,6 +45,24 @@ namespace MusicBackend.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Playlists");
+                });
+
+            modelBuilder.Entity("MusicBackend.Models.DataLayer.PlaylistSong", b =>
+                {
+                    b.Property<string>("PlaylistId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("SongId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
+                    b.HasKey("PlaylistId", "SongId");
+
+                    b.HasIndex("SongId");
+
+                    b.ToTable("PlaylistSongs");
                 });
 
             modelBuilder.Entity("MusicBackend.Models.DataLayer.Song", b =>
@@ -97,26 +115,14 @@ namespace MusicBackend.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Username")
+                        .IsUnique();
+
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("PlaylistSong", b =>
-                {
-                    b.Property<string>("SongsId")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("playlistsId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("SongsId", "playlistsId");
-
-                    b.HasIndex("playlistsId");
-
-                    b.ToTable("PlaylistSong");
                 });
 
             modelBuilder.Entity("MusicBackend.Models.DataLayer.Playlist", b =>
@@ -128,19 +134,33 @@ namespace MusicBackend.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("PlaylistSong", b =>
+            modelBuilder.Entity("MusicBackend.Models.DataLayer.PlaylistSong", b =>
                 {
-                    b.HasOne("MusicBackend.Models.DataLayer.Song", null)
-                        .WithMany()
-                        .HasForeignKey("SongsId")
+                    b.HasOne("MusicBackend.Models.DataLayer.Playlist", "Playlist")
+                        .WithMany("PlaylistSongs")
+                        .HasForeignKey("PlaylistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MusicBackend.Models.DataLayer.Playlist", null)
-                        .WithMany()
-                        .HasForeignKey("playlistsId")
+                    b.HasOne("MusicBackend.Models.DataLayer.Song", "Song")
+                        .WithMany("PlaylistSongs")
+                        .HasForeignKey("SongId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Playlist");
+
+                    b.Navigation("Song");
+                });
+
+            modelBuilder.Entity("MusicBackend.Models.DataLayer.Playlist", b =>
+                {
+                    b.Navigation("PlaylistSongs");
+                });
+
+            modelBuilder.Entity("MusicBackend.Models.DataLayer.Song", b =>
+                {
+                    b.Navigation("PlaylistSongs");
                 });
 
             modelBuilder.Entity("MusicBackend.Models.DataLayer.User", b =>

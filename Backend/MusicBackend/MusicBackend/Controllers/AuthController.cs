@@ -77,7 +77,7 @@ namespace MusicBackend.Controllers
                 string acessToken = await _tokenService.GenerateAccessToken(existingUser);
                 var newRefreshToken = await _tokenService.GenerateRefreshToken();
 
-                await _tokenService.SetRefreshToken(newRefreshToken, Response);
+                await _tokenService.SetRefreshToken(newRefreshToken, Response); //Note: Do i rlly have to set as cookie?
 
                 UserResponse userResponse = new UserResponse()
                 {

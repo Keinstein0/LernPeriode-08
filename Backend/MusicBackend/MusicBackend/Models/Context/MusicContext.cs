@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MusicBackend.Models.DataLayer;
+using Microsoft.Extensions.Hosting;
 using MusicBackend.Models;
+using MusicBackend.Models.DataLayer;
 
 namespace MusicBackend.Models
 {
@@ -20,15 +21,18 @@ namespace MusicBackend.Models
                 .HasIndex(u => u.Username) //unique username
                 .IsUnique();
 
-            //N:M
+            //N:M from Playlist to Song
             modelBuilder.Entity<Playlist>()
-                .HasMany(playlist => playlist.Songs)
-                .WithMany(song => song.playlists);
+                .HasMany(e => e.Songs)
+                .WithMany(e => e.Playlists)
+                .UsingEntity<PlaylistSong>(
+                    r => r.HasOne<Song>(e => e.Song).WithMany(e => e.PlaylistSongs),
+                    l => l.HasOne<Playlist>(e => e.Playlist).WithMany(e => e.PlaylistSongs));
         }
-
 
         public DbSet<User> Users { get; set; } 
         public DbSet<Song> Songs { get; set; }
         public DbSet<Playlist> Playlists { get; set; }
+        public DbSet<PlaylistSong> PlaylistSongs { get; set; }
     }
 }

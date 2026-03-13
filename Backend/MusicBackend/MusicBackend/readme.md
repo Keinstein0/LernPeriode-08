@@ -54,6 +54,7 @@
 ---------------
 
 ## Playlists
+### Playlist
 #### POST /playlist
 ```
 {
@@ -79,17 +80,32 @@
 
 ---------------
 
-#### GET /playlist
-*gets all of your playlists*
+#### GET /playlist *?filter=abc*
+*gets all of your playlists (optionally filtered by name)*
 
 ---------------
 
-#### GET /playlist/{id}
-*gets single playlist with all the songs*
+#### GET /playlist/{list_id}
+*gets single playlist with all the songs and their indices*
+
+---------------
+
+### Playlist:Songs
+
+#### PUT /playlist/{playlistId}/{musicId}
+*updates the index of the song, cascades all other songs after to adapt their indices*
+
+#### DELETE /playlist/{playlistId}/{musicId}
+*deletes the song from the playlist, cascades all other index songs*
+
+#### POST /playlist/{playlistId}/{musicId}
+*appends a song to the end of the playlist*
+
 
 
 ## Songs
-#### GET /music?page=0&length=10
+### Songs
+#### GET /music?*page=0&length=10&filter=abc*
 *gets all music in pages*
 
 ----------
@@ -99,28 +115,6 @@
 
 -----------
 
-## Songs upload
-#### POST /music
-```
-{
-    srcUrl : https://youtu.be/23lo23gc //where its fetched from
-}
-```
-*fetches the music and returns the metadata including the upload id*
-
---------
-
-#### POST /music/{id}
-```
-{
-    title : myChangedTitle,
-    composer : myChangedComposer,
-    thumbnail : myUpdatedThumbnail
-}
-```
-*second step to uploading, uploads the fetched file to S23 bucket with corrected metadata*
-
---------
 
 #### PUT /music/{id}
 ```
@@ -136,5 +130,19 @@
 
 #### DELETE /music/{id} *#IsSuper*
 *deletes a piece of music*
+
+--------
+
+### Songs:Upload
+#### POST /music
+```
+{
+    srcUrl : https://youtu.be/23lo23gc //where its fetched from
+    title : myChangedTitle, (opt)
+    composer : myChangedComposer, (opt)
+    thumbnail : myUpdatedThumbnailFilestream (opt)
+}
+```
+*fetches the music, updates metadata on demand and returns the the upload id*
 
 --------
