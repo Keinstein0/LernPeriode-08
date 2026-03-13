@@ -55,7 +55,7 @@
             sessionStorage.setItem("uuid", jwt.uid)
             sessionStorage.setItem("isSuperuser", jwt.isSuper.toString())
 
-            goto("/homescreen");
+            goto("/app/search");
         }
         catch (err){
             console.error(err)
