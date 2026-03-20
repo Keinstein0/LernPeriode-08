@@ -39,4 +39,4 @@ Heute konnte ich mich weiter in Svelte hineinarbeiten und zudem das Login des Fr
 - [ ] Backend Playlists rohimplementiert
 - [ ] Frontend Hauptseite sichtbar
 - [ ] Frontend nutzerliste sichtbar
-- [ ] Frontend nutzereditor(en) fertig
+- [ ] Tutorial Fertig
