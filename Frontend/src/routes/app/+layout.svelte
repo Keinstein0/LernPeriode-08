@@ -13,18 +13,28 @@
   });
 
   let navItems = $derived([
-    { path: '/app/playlists', label: 'Playlists' , imgUrl : "playlist.svg", className : "icon"},
-    { path: '/app/search', label: 'Explore' , imgUrl : "explore.svg", className : "icon"},
-    { path: '/app/account', label: 'You' , imgUrl : `https://api.dicebear.com/9.x/thumbs/png?seed=${uuid}`, className : "user"}
+    { path: '/app/playlists', label: 'Playlists', imgUrl: "playlist.svg", className: "icon" },
+    { path: '/app/search', label: 'Explore', imgUrl: "explore.svg", className: "icon" },
+    { 
+      path: '/app/account', 
+      label: 'You', 
+      // The URL updates reactively once uuid is set in onMount
+      imgUrl: uuid ? `https://api.dicebear.com/9.x/thumbs/svg?seed=${uuid}` : "", 
+      className: "user" 
+    }
   ]);
 
+  $inspect(navItems)
+
+
+  let { children } = $props();
   let yOffset = $state(0);
 </script>
 
 <div class="page-wrapper">
   <main class="content">
     {#if !isSongFulscreen}
-      <slot /> 
+      {@render children()}
     {:else}
       <p>testttttt</p>
     {/if}

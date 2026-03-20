@@ -12,7 +12,10 @@ const config = {
             fallback: 'index.html', // Use 'index.html' if you want a true SPA
             precompress: false,
             strict: true
-        })
+        }),
+        env: {
+			dir: '../' 
+		}
     }
 };
 

@@ -3,12 +3,13 @@
   export let color = "black";
   export let isActive = false;
 
-  const { imgUrl, label, className: classMain } = item;
+  $: imgUrl = item.imgUrl;
+  $: label = item.label;
+  $: classMain = item.className;
 
-  const isExternal = imgUrl.startsWith('http');
-  const src = isExternal ? imgUrl : `/Images/${imgUrl}`;
-
-  $: isSvg = imgUrl.endsWith('.svg');
+  $: isExternal = imgUrl?.startsWith('http');
+  $: src = isExternal ? imgUrl : `/Images/${imgUrl}`;
+  $: isSvg = imgUrl?.endsWith('.svg');
 </script>
 
 {#if isSvg}

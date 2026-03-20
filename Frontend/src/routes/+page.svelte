@@ -1,7 +1,8 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
+    import { PUBLIC_API_BASE_URL } from '$env/static/public'
 
-    const BASE_URL = "http://localhost:5016/api";
+    const BASE_URL = PUBLIC_API_BASE_URL;
     const LOGIN_ROUTE = "/Auth/login";
 
     class JWTResponse{
