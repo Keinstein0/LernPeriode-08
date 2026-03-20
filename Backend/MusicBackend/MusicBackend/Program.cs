@@ -104,7 +104,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false, // Optional: Validierung des Issuer
         ValidateAudience = false,
         ValidateLifetime = true, // Zeitstempel überprüfen
-        ClockSkew = TimeSpan.Zero // Optional: Pufferzeit deaktivieren – siehe «Zusätzliche Angaben zum Auftrag»
+        ClockSkew = TimeSpan.Zero // Optional: Pufferzeit deaktivieren – siehe «Zusätzliche Angaben zum Auftrag» <-- What is that??
     };
 });
 

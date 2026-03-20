@@ -81,12 +81,12 @@
 ---------------
 
 #### GET /playlist *?filter=abc*
-*gets all of your playlists (optionally filtered by name)*
+*gets all of your playlists (optionally filtered by name) ordered by name*
 
 ---------------
 
 #### GET /playlist/{list_id}
-*gets single playlist with all the songs and their indices*
+*gets single playlist with all the songs and their indices ordered by indices*
 
 ---------------
 
@@ -98,7 +98,7 @@
 #### DELETE /playlist/{playlistId}/{musicId}
 *deletes the song from the playlist, cascades all other index songs*
 
-#### POST /playlist/{playlistId}/{musicId}
+#### POST /playlist/{playlistId}/{musicId} 
 *appends a song to the end of the playlist*
 
 

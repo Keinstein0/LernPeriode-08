@@ -13,14 +13,16 @@ namespace MusicBackend.Models.Data.Song
         public int Length { get; set; }
 
 
-        public static void ToDisplayUsers(List<MusicBackend.Models.DataLayer.Song> users, out List<DisplaySong> displayUsers)
+        public static List<DisplaySong> ToDisplayUsers(List<MusicBackend.Models.DataLayer.Song> users)
         {
-            displayUsers = new List<DisplaySong>();
+            List<DisplaySong> displayUsers = new List<DisplaySong>();
 
             foreach (var user in users)
             {
                 displayUsers.Add(user.AsDisplaySong());
             }
+
+            return displayUsers;
         }
     }
 }

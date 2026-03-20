@@ -43,8 +43,7 @@ namespace MusicBackend.Controllers
                 .Take(length)
                 .ToListAsync();
 
-            List<DisplaySong> displaySongs;
-            DisplaySong.ToDisplayUsers(songs, out displaySongs);
+            List<DisplaySong> displaySongs = DisplaySong.ToDisplayUsers(songs);
             return Ok(displaySongs);
         }
 
