@@ -1,4 +1,4 @@
-﻿namespace MusicBackend.Services
+﻿namespace MusicBackend.Services.Hashing
 {
     public interface IPasswordHash
     {

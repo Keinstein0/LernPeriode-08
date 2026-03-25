@@ -6,7 +6,8 @@ using MusicBackend.Models;
 using MusicBackend.Models.Data.Song;
 using MusicBackend.Models.Data.User;
 using MusicBackend.Models.DataLayer;
-using MusicBackend.Services;
+using MusicBackend.Services.BucketInterface;
+using MusicBackend.Services.Fetcher;
 
 namespace MusicBackend.Controllers
 {
@@ -27,8 +28,11 @@ namespace MusicBackend.Controllers
 
         [Authorize]
         [HttpGet]
-        async public Task<IActionResult> GetSongs([FromQuery] int page, [FromQuery] int length, [FromQuery] string filter)
+        async public Task<IActionResult> GetSongs([FromQuery] int page, [FromQuery] int length, [FromQuery] string? filter)
         {
+            int validatedPage = Math.Max(1, page);
+            int validatedLength = Math.Max(0, length);
+
             IQueryable<Song> query = _context.Songs;
 
             if (!string.IsNullOrWhiteSpace(filter))
@@ -39,14 +43,15 @@ namespace MusicBackend.Controllers
             query = query.OrderBy(p => p.Title);
 
             List<Song> songs = await query
-                .Skip((page - 1) * length)
-                .Take(length)
+                .Skip((validatedPage - 1) * validatedLength)
+                .Take(validatedLength)
                 .ToListAsync();
 
             List<DisplaySong> displaySongs = DisplaySong.ToDisplayUsers(songs);
             return Ok(displaySongs);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         async public Task<IActionResult> GetSong([FromRoute] string id)
         {
@@ -79,6 +84,7 @@ namespace MusicBackend.Controllers
             return Ok(authorisation);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         async public Task<IActionResult> UpdateSong([FromRoute] string id,[FromForm] SongRequest songRequest)
         {
@@ -107,6 +113,7 @@ namespace MusicBackend.Controllers
             return Ok(song.Id);
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         async public Task<IActionResult> DeleteSong([FromRoute] string id)
         {
@@ -117,7 +124,10 @@ namespace MusicBackend.Controllers
             }
 
             await _bucketInterface.DeleteResource(song.MusicUrl);
-            await _bucketInterface.DeleteResource(song.ThumbnailUrl);
+            if (!(song.ThumbnailUrl == null)) // only delete if there's an actual thumbnail
+            {
+                await _bucketInterface.DeleteResource(song.ThumbnailUrl);
+            }
 
             _context.Remove(song);
             await _context.SaveChangesAsync();
@@ -125,6 +135,7 @@ namespace MusicBackend.Controllers
             return Ok(song);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> FetchSongAndUpload(FetchRequest request)
         {
@@ -159,7 +170,7 @@ namespace MusicBackend.Controllers
             _context.Songs.Add(song);
             await _context.SaveChangesAsync(true);
 
-            return Ok(song);
+            return Ok(song.AsDisplaySong());
         }
     }
 }

@@ -6,6 +6,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MusicBackend.Models;
 using MusicBackend.Services;
+using MusicBackend.Services.BucketInterface;
+using MusicBackend.Services.Fetcher;
+using MusicBackend.Services.Hashing;
+using MusicBackend.Services.TokenGenerator;
 using System.Reflection; // Wichtig für Assembly.GetExecutingAssembly()
 using System.Text;
 
@@ -53,6 +57,9 @@ builder.Services.AddDbContext<MusicContext>(options =>
 
 builder.Services.AddScoped<IPasswordHash, BCryptHasher>();
 builder.Services.AddScoped<ITokenGenerator, JWTTokenGenerator>();
+
+builder.Services.AddScoped<IBucketInterface, MockBucketInterface>();
+builder.Services.AddScoped<IFetchInterface, MockFetchInterface>();
 
 
 

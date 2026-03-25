@@ -6,7 +6,6 @@ namespace MusicBackend.Models.Data.Song
     public class DisplaySong
     {
         public required string Id { get; set; }
-        public required string MusicUrl { get; set; }
         public string? ThumbnailUrl { get; set; }
         public required string Title { get; set; }
         public string? Composer { get; set; }

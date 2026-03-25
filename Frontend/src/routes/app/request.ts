@@ -67,7 +67,13 @@ async function renewToken(){
     const url = `${PUBLIC_API_BASE_URL}/Auth/refresh`;
 
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        method : "POST",
+        credentials : 'include',
+        headers : {
+            'Content-Type' : 'application/json'
+        }
+    });
     if (!response.ok){
         throw new Error("Failed to renew token")
     }

@@ -93,13 +93,13 @@
 ### Playlist:Songs
 
 #### PUT /playlist/{playlistId}/{musicId}
-*updates the index of the song, cascades all other songs after to adapt their indices*
+*updates the index of the song, cascades all other songs after to adapt their indices* //
 
 #### DELETE /playlist/{playlistId}/{musicId}
 *deletes the song from the playlist, cascades all other index songs*
 
 #### POST /playlist/{playlistId}/{musicId} 
-*appends a song to the end of the playlist*
+*appends a song to the end of the playlist* //
 
 
 

@@ -2,6 +2,6 @@
 {
     public class PlaylistRequest
     {        
-        public required string Name;
+        public required string Name { get; set; }
     }
 }

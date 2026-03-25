@@ -1,4 +1,4 @@
-﻿namespace MusicBackend.Services
+﻿namespace MusicBackend.Services.Fetcher
 {
     public interface IFetchInterface
     {

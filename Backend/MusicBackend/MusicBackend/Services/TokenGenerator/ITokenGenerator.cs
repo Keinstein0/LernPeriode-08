@@ -2,7 +2,7 @@
 using MusicBackend.Models.Data.User;
 using MusicBackend.Models.DataLayer;
 
-namespace MusicBackend.Services
+namespace MusicBackend.Services.TokenGenerator
 {
     public interface ITokenGenerator
     {

@@ -1,7 +1,6 @@
-﻿using MusicBackend.Services;
-using BCrypt.Net;
+﻿using BCrypt.Net;
 
-namespace MusicBackend.Services
+namespace MusicBackend.Services.Hashing
 {
     public class BCryptHasher : IPasswordHash
     {

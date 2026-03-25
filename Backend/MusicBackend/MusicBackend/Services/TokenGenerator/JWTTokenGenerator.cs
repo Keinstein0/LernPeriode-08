@@ -1,8 +1,6 @@
-﻿using MusicBackend.Services;
-using MusicBackend.Models.Data.User;
+﻿using MusicBackend.Models.Data.User;
 using MusicBackend.Models.DataLayer;
 using Microsoft.IdentityModel.Tokens;
-using MusicBackend.Services;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using MusicBackend.Models.Data;
 
-namespace MusicBackend.Services
+namespace MusicBackend.Services.TokenGenerator
 {
     public class JWTTokenGenerator : ITokenGenerator
     {
@@ -36,7 +34,7 @@ namespace MusicBackend.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: credentials);
             
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
@@ -48,8 +46,8 @@ namespace MusicBackend.Services
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddDays(7),
-                Created = DateTime.Now
+                Expires = DateTime.UtcNow.AddDays(7),
+                Created = DateTime.UtcNow
             };
             return refreshToken;
         }
@@ -59,12 +57,17 @@ namespace MusicBackend.Services
             var cookie = new CookieOptions
             {
                 HttpOnly = true,
-                Expires = newRefreshToken.Expires
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = newRefreshToken.Expires,
+                Path = "/"
             };
+            cookie.Extensions.Add("Partitioned");
+
             Response.Cookies.Append("refreshToken", newRefreshToken.Token, cookie);
         }
 
-        async public Task<ClaimData> GetClaims(System.Security.Claims.ClaimsPrincipal user)
+        async public Task<ClaimData> GetClaims(ClaimsPrincipal user)
         {
             string username = user.FindFirst(ClaimTypes.Name)?.Value;
             string isSuperAsString = user.FindFirst(ClaimTypes.Role)?.Value;

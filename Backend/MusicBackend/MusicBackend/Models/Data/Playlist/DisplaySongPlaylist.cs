@@ -3,17 +3,17 @@ using MusicBackend.Models.DataLayer;
 
 namespace MusicBackend.Models.Data.Playlist
 {
-    public class SongPlaylist
+    public class DisplaySongPlaylist
     {
         public string? Id { get; set; }
         public string? Name { get; set; }
         public DateTime? Created { get; set; }
 
-        public List<DisplaySong>? Songs { get; set; }
+        public List<PlaylistSongItem>? Songs { get; set; }
 
-        public SongPlaylist(DataLayer.Playlist playlist)
+        public DisplaySongPlaylist(DataLayer.Playlist playlist)
         {
-            Songs = DisplaySong.ToDisplayUsers(playlist.Songs.ToList()); //lwky if this works
+            Songs = PlaylistSongItem.ConvertToPlaylistSongItem(playlist.PlaylistSongs.ToList());
 
             Id = playlist.Id;
             Name = playlist.Name;

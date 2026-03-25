@@ -1,4 +1,4 @@
-﻿namespace MusicBackend.Services
+﻿namespace MusicBackend.Services.BucketInterface
 {
     public interface IBucketInterface
     {

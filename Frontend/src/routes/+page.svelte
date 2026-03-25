@@ -35,6 +35,7 @@
             const response = await fetch(url, {
                 method : "POST",
                 body: JSON.stringify(body),
+                credentials: 'include',
                 headers: {
                 "Content-Type": "application/json", // This is the missing piece!
                 "Accept": "application/json"}
@@ -79,10 +80,10 @@
         <input type="text" bind:value={username} class="no-border" placeholder="username">
         <div class="input-group">
             {#if showPassword}
-            <input type="text" bind:value={password} class="no-border" placeholder="password">
-        {:else}
-            <input type="password" bind:value={password} placeholder="password">
-        {/if}
+                <input type="text" bind:value={password} class="no-border" placeholder="password">
+            {:else}
+                <input type="password" bind:value={password} placeholder="password">
+            {/if}
             <button type="button" class="pass-reveal" onclick={togglePasswordVisibility}>
                 {#if showPassword}
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-eye" viewBox="0 0 16 16">

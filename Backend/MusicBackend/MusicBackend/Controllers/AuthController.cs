@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using MusicBackend.Models;
 using MusicBackend.Models.Data.User;
 using MusicBackend.Models.DataLayer;
-using MusicBackend.Services;
+using MusicBackend.Services.Hashing;
+using MusicBackend.Services.TokenGenerator;
 using System.Security.Claims;
 
 namespace MusicBackend.Controllers
@@ -62,13 +63,15 @@ namespace MusicBackend.Controllers
         async public Task<IActionResult> GetRefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var existingUser = await _context.Users!.FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);
+            var existingUser = await _context.Users!
+                .FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);
 
             if (existingUser == null)
             {
                 return Unauthorized("Invalid Refresh Token");
             }
-            else if (existingUser.TokenExpires < DateTime.Now)
+
+            else if (existingUser.TokenExpires < DateTime.UtcNow)
             {
                 return Unauthorized("Token expired");
             }
@@ -76,6 +79,12 @@ namespace MusicBackend.Controllers
             {
                 string acessToken = await _tokenService.GenerateAccessToken(existingUser);
                 var newRefreshToken = await _tokenService.GenerateRefreshToken();
+
+                existingUser.RefreshToken = newRefreshToken.Token;
+                existingUser.TokenExpires = newRefreshToken.Expires;
+                existingUser.DateCreated = newRefreshToken.Created;
+
+                await _context.SaveChangesAsync();
 
                 await _tokenService.SetRefreshToken(newRefreshToken, Response); //Note: Do i rlly have to set as cookie?
 
@@ -135,8 +144,21 @@ namespace MusicBackend.Controllers
             {
                 return Unauthorized("Cannot acess foreign account");
             }
+            User? potentialUserWithSameName = await _context.Users!.FirstOrDefaultAsync(u => u.Username == request.Username);
+            if (potentialUserWithSameName != null)
+            {
+                if (potentialUserWithSameName.Id == id)
+                {
+                    return BadRequest("Old Username cannot be the same as new one");
+                }
+                else
+                {
+                    return BadRequest("User with that name already exists");
+                }
+            }
 
-            User user = await _context.Users!.FirstOrDefaultAsync(u => u.Id == id);
+
+            User? user = await _context.Users!.FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
             {
                 return NotFound();
@@ -161,7 +183,7 @@ namespace MusicBackend.Controllers
             }
 
 
-            User user = await _context.Users.FindAsync(id);
+            User? user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();

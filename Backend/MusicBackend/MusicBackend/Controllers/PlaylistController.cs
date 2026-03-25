@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using MusicBackend.Models;
 using MusicBackend.Models.Data;
 using MusicBackend.Models.Data.Playlist;
 using MusicBackend.Models.DataLayer;
-using MusicBackend.Services;
+using MusicBackend.Services.TokenGenerator;
 using System.Threading.Tasks;
 
 namespace MusicBackend.Controllers
@@ -23,6 +24,7 @@ namespace MusicBackend.Controllers
             _context = context;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostPlaylist(PlaylistRequest request)
         {
@@ -39,15 +41,17 @@ namespace MusicBackend.Controllers
                 Name = request.Name,
                 Id = Guid.NewGuid().ToString(),
                 Owner = user,
+                OwnerId = user.Id,
                 CreatedDate = DateTime.UtcNow,
             };
 
             _context.Playlists.Add(playlist);
             await _context.SaveChangesAsync();
 
-            return Ok(playlist);
+            return Ok(playlist.AsDisplayPlaylist());
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePlaylist(PlaylistRequest request, [FromRoute] string id)
         {
@@ -62,9 +66,10 @@ namespace MusicBackend.Controllers
 
             playlist.Name = request.Name;
             await _context.SaveChangesAsync();
-            return Ok(playlist);
+            return Ok(playlist.AsDisplayPlaylist());
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePlaylist([FromRoute] string id)
         {
@@ -75,12 +80,14 @@ namespace MusicBackend.Controllers
             if (playlist == null) { return NotFound(); }
 
             _context.Remove(playlist);
+            await _context.SaveChangesAsync();
 
-            return Ok(playlist);
+            return Ok(playlist.AsDisplayPlaylist());
         }
 
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetPlaylists([FromQuery] string filter)
+        public async Task<IActionResult> GetPlaylists([FromQuery] string? filter)
         {
             IQueryable<Playlist> query = _context.Playlists;
             ClaimData claims = await _tokenGenerator.GetClaims(User);
@@ -99,20 +106,27 @@ namespace MusicBackend.Controllers
             return Ok(displayPlaylists);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetSongsInPlaylist([FromRoute] string id)
         {
             ClaimData claims = await _tokenGenerator.GetClaims(User);
             
-            Playlist? playlist = await _context.Playlists.FirstOrDefaultAsync(playlist => playlist.Id == id && playlist.OwnerId == claims.Id);
+            Playlist? playlist = await _context.Playlists
+                .Include(p => p.PlaylistSongs)
+                .ThenInclude(ps => ps.Song)
+                .FirstOrDefaultAsync(p => p.Id == id && p.OwnerId == claims.Id);
+
+
 
             if (playlist == null) { return NotFound(); }
 
-            SongPlaylist displayPlaylist = new SongPlaylist(playlist);
+            DisplaySongPlaylist displayPlaylist = new DisplaySongPlaylist(playlist);
 
             return Ok(displayPlaylist);
         }
 
+        [Authorize]
         [HttpPost("{list_id}/{music_id}")]
         public async Task<IActionResult> PostSongInPlaylist([FromRoute] string list_id, [FromRoute] string music_id)
         {
@@ -129,6 +143,12 @@ namespace MusicBackend.Controllers
             List<PlaylistSong> playlistSongList = await _context.PlaylistSongs.Where(song => song.PlaylistId == playlist.Id)
                                                                               .OrderByDescending(song => song.Index).ToListAsync();
 
+            int newIndex = 0;
+            if (playlistSongList.Count() > 0) 
+            { 
+                newIndex = playlistSongList[0].Index + 1; 
+            }
+
             PlaylistSong playlistSong = new PlaylistSong()
             {
                 Playlist = playlist,
@@ -137,21 +157,83 @@ namespace MusicBackend.Controllers
                 Song = song,
                 SongId = music_id,
                 
-                Index = playlistSongList[0].Index + 1 //Get the largest index and add one (adds the item to the bottom)
+                Index = newIndex //Get the largest index and add one (adds the item to the bottom)
             };
 
-            _context.PlaylistSongs.Add(playlistSong);
+            if (playlistSongList.Any(o => o.SongId == music_id))
+            {
+                return BadRequest("Song already in playlist");
+            }
 
-            return Ok(song);
+            _context.PlaylistSongs.Add(playlistSong);
+            await _context.SaveChangesAsync();
+
+            return Ok(song.AsDisplaySong());
         }
 
+        [Authorize]
         [HttpPut("{list_id}/{music_id}")]
         public async Task<IActionResult> UpdateSongInPlaylist([FromRoute] string list_id, [FromRoute] string music_id, PlaylistSongRequest request)
         {
-            return Ok("bruhhhhhh");
+            ClaimData claims = await _tokenGenerator.GetClaims(User);
+            int targetIndex = (int)Math.Floor(request.Index);
+
+            Playlist? play = await _context.Playlists.FirstOrDefaultAsync(playlist => playlist.Id == list_id && playlist.OwnerId == claims.Id);
+            if (play == null) { return NotFound(); } // Trying to acess playlist of someone else and we can't have that, can we?
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var songItem = await _context.PlaylistSongs.FirstOrDefaultAsync(playlistSong => playlistSong.PlaylistId == list_id && playlistSong.SongId == music_id);
+                if (songItem == null) { return NotFound(); }
+
+                int oldIndex = songItem.Index;
+
+                if (targetIndex < oldIndex) // Move up
+                {
+                    await _context.PlaylistSongs
+                        .Where(x => x.Index >= targetIndex && x.Index < oldIndex)
+                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.Index, b => b.Index + 1));
+                }
+                else if (targetIndex > oldIndex) // Move down
+                {
+                    await _context.PlaylistSongs
+                        .Where(x => x.Index > oldIndex && x.Index <= targetIndex)
+                        .ExecuteUpdateAsync(s => s.SetProperty(b => b.Index, b => b.Index - 1));
+                }
+
+                songItem.Index = targetIndex;
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return BadRequest(ex.Message);
+            }
+            
+            
+            return Ok();
         }
 
+        [Authorize]
+        [HttpDelete("{list_id}/{music_id}")]
+        public async Task<IActionResult> DeleteSongFromPlaylist([FromRoute] string list_id, [FromRoute] string music_id)
+        {
+            ClaimData claim = await _tokenGenerator.GetClaims(User);
 
+            Playlist? playlist = await _context.Playlists.FirstOrDefaultAsync(playlist => playlist.Id == list_id && playlist.OwnerId == claim.Id);
+            if (playlist == null) { return NotFound(); }
 
+            PlaylistSong? playlistSong = _context.PlaylistSongs.FirstOrDefault(song => song.PlaylistId == list_id && song.SongId == music_id);
+
+            if (playlistSong == null) { return NotFound(); }
+
+            _context.Remove(playlistSong);
+            await _context.SaveChangesAsync();
+
+            return Ok(playlist.AsDisplayPlaylist());
+        }
     }
 }

@@ -18,7 +18,6 @@ namespace MusicBackend.Models.DataLayer
         {
             return new DisplaySong
             { Id = Id,
-            MusicUrl = MusicUrl,
             ThumbnailUrl = ThumbnailUrl,
             Title = Title,
             Composer = Composer,

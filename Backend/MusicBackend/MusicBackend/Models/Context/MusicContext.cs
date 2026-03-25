@@ -15,6 +15,7 @@ namespace MusicBackend.Models
             modelBuilder.Entity<User>()
                 .HasMany(user => user.Playlists)
                 .WithOne(playlist => playlist.Owner)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasForeignKey(playlist => playlist.OwnerId);
 
             modelBuilder.Entity<User>()
@@ -26,8 +27,8 @@ namespace MusicBackend.Models
                 .HasMany(e => e.Songs)
                 .WithMany(e => e.Playlists)
                 .UsingEntity<PlaylistSong>(
-                    r => r.HasOne<Song>(e => e.Song).WithMany(e => e.PlaylistSongs),
-                    l => l.HasOne<Playlist>(e => e.Playlist).WithMany(e => e.PlaylistSongs));
+                    r => r.HasOne<Song>(e => e.Song).WithMany(e => e.PlaylistSongs).OnDelete(DeleteBehavior.Cascade),
+                    l => l.HasOne<Playlist>(e => e.Playlist).WithMany(e => e.PlaylistSongs).OnDelete(DeleteBehavior.Cascade));
         }
 
         public DbSet<User> Users { get; set; } 
