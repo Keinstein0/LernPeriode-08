@@ -24,9 +24,24 @@ RUN dotnet publish "./MusicBackend.csproj" -c $BUILD_CONFIGURATION -o /app/publi
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
+
 USER root
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    ffmpeg \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
+    -o /usr/local/bin/yt-dlp
+
+RUN chmod a+rx /usr/local/bin/yt-dlp
+
 USER $APP_UID
+
 WORKDIR /app
+
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "MusicBackend.dll"]

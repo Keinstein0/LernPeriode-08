@@ -174,6 +174,14 @@
     createUserVisible = false;
   }
 
+  async function onKeyDown(key : KeyboardEvent){
+    if (key.key == "Escape"){
+        createUserVisible = false;
+        updateInputVisible = false;
+        deleteConfirmationVisible = false;
+    }
+  }
+
   onMount(() => {
     uuid = sessionStorage.getItem('uuid') || 'default';
     token = sessionStorage.getItem('transfer') || 'default';
@@ -223,63 +231,77 @@
                         background-color: {'white'};
                         "
                     ></div>
-                    <p>{user.username} {user.id == uuid ? '(you)' : ''}</p>
-                    {#if isSuper}
-                        <button onclick={() => showDeleteMenu(user.id)}>Delete</button>
-                        <button onclick={() => showUpdateMenu(user.id)}>Update</button>
-                    {/if}
+                    <p class="username-cell">{user.username} {user.id == uuid ? '(you)' : ''}</p>
+                    <div class="action-cell">
+                        {#if isSuper}
+                            <button onclick={() => showDeleteMenu(user.id)}>Delete</button>
+                        {/if}
+                    </div>
+                    <div class="action-cell">
+                        {#if isSuper}
+                            <button onclick={() => showUpdateMenu(user.id)}>Update</button>
+                        {/if}
+                    </div>
                 </div>
             {/each}
         </div>
         {#if isSuper}
-            <button onclick={() => createUserVisible = true}>New User</button>
+            <button onclick={() => createUserVisible = true} class="create-button">New User</button>
         {/if}
     {:catch error}
         <p style="color: red;">{error.message}</p>
     {/await}
 
     {#if deleteConfirmationVisible}
-        <div class="confirm-cancel">
-            <h1>Are you sure?</h1>
-            <p>This action cannot be undone!</p>
-            <p>(for uuid {editId})</p>
-            <div>
-                <button onclick={() => deleteConfirmationVisible = false}>Cancel</button>
-                <button onclick={deleteUser}>Confirm</button>
+        <div class="confirm-cancel-wrapper">
+            <div class="confirm-cancel">
+                <h1 class="popup-header">Are you sure?</h1>
+                <p>This action cannot be undone!</p>
+                <p class="uuid-text">(for uuid {editId})</p>
+                <div class="button-div">
+                    <button class="overlay-button" onclick={() => deleteConfirmationVisible = false}>Cancel</button>
+                    <button class="overlay-button" onclick={deleteUser}>Confirm</button>
+                </div>
             </div>
         </div>
     {/if}
 
     {#if updateInputVisible}
-        <div class="confirm-cancel">
-            <h1>Change Username/Password</h1>
-            <p>(for uuid {editId})</p>
-            <input type="text" placeholder="new username" bind:value={username}> <!--TODO: actual component for pwds-->
-            <Passwordfield placeholder="new password" bind:value={password}></Passwordfield>
-            <Passwordfield placeholder="confirm password" bind:value={confirmPwd}></Passwordfield>
-            {#if error !== ""}
-                <p>{error}</p>
-            {/if}
-            <div>
-                <button onclick={() => updateInputVisible = false}>Cancel</button>
-                <button onclick={updateUser}>Update</button>
+        <div class=confirm-cancel-wrapper>
+            <div class="confirm-cancel">
+                <h1 class="popup-header">Change Username/Password</h1>
+                <p class="uuid-text">(for uuid {editId})</p>
+                <input type="text" placeholder="new username" bind:value={username}> <!--TODO: actual component for pwds-->
+                <Passwordfield placeholder="new password" bind:value={password}></Passwordfield>
+                <Passwordfield placeholder="confirm password" bind:value={confirmPwd}></Passwordfield>
+                {#if error !== ""}
+                    <p>{error}</p>
+                {/if}
+                <div class="button-div">
+                    <button class="overlay-button" onclick={() => updateInputVisible = false}>Cancel</button>
+                    <button class="overlay-button" onclick={updateUser}>Update</button>
+                </div>
             </div>
         </div>
     {/if}
 
     {#if createUserVisible}
-        <div class="confirm-cancel">
-            <h1>Create new User</h1>
-            <input type="text" placeholder="username" bind:value={username}>
-            <Passwordfield placeholder="password" bind:value={password}></Passwordfield>
-            <Passwordfield placeholder="confirm password" bind:value={confirmPwd}></Passwordfield>
-            <div>
-                <button onclick={() => createUserVisible=false}>Cancel</button>
-                <button onclick={createUser}>Create</button>
+        <div class="confirm-cancel-wrapper">
+            <div class="confirm-cancel">
+                <h1 class="popup-header">Create new User</h1>
+                <input type="text" placeholder="username" bind:value={username}>
+                <Passwordfield placeholder="password" bind:value={password}></Passwordfield>
+                <Passwordfield placeholder="confirm password" bind:value={confirmPwd}></Passwordfield>
+                <div class="button-div">
+                    <button class="overlay-button" onclick={() => createUserVisible=false}>Cancel</button>
+                    <button class="overlay-button" onclick={createUser}>Create</button>
+                </div>
             </div>
         </div>
     {/if}
 </div>
+
+<svelte:window on:keydown={onKeyDown} />
 
 <style>
     p, h1{
@@ -294,6 +316,7 @@
         overscroll-behavior-y: none;
         height: 100%;
         font-family: TangoSans;
+        overflow: hidden;
     }
 
     .user-image {
@@ -358,13 +381,14 @@
         background-color: #1ed760;
         color: white;
 
-        outline: 2px solid white;
+        outline: 2px solid rgb(255, 255, 255);
         outline-offset: 2px;
         border: none;
 
         font-family: TangoSans;
 
-        transition: 200ms;
+        transition: 50ms;
+        cursor: pointer;
     }
 
     .youraccount-update{
@@ -384,52 +408,171 @@
     }
 
     .youraccount-edit:hover{
-        opacity: 80%;
+        outline: 3px solid rgb(155, 155, 155);
     }
+
 
     .otherusers{
-        max-height: 30vh;
-        overflow: scroll;
+        max-height: 25vh;
+        overflow-y: auto;
         margin: 10px;
 
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.243) #000000;
+
         display: grid;
-        grid-template-columns: auto 1fr auto auto;
+        grid-template-columns: auto 1fr auto auto; 
         gap: 1rem;
         align-items: center;
-        padding: 1rem
+        padding: 1rem;
+        background-color: #121212;
+        border-radius: 8px;
     }
 
+
     .otheruser-div{
-        background-color: red;
-        display: flex;
-        flex-direction: row;
-        align-content: center;
-        
+        display: contents;
     }
 
     .otheruser-img{
         width: 32px;
         height: 32px;
-        align-self: center;
         border-radius: 100px;
+        background-size: cover;
+
+        transition: transform 600ms;
+    }
+
+    .otheruser-img:hover{
+        transform: rotate(360deg);
+    }
+
+    .username-cell{
+        white-space: normal; 
+        overflow-wrap: break-word;
+        word-break: break-word;
+        
+        margin: 0;
+        padding: 0 10px;
+        align-self: center;
+    }
+
+    .action-cell {
+        /* Ensures the cell exists even if the button is hidden */
+        display: flex;
+        justify-content: center;
+        min-width: 80px; 
+    }
+
+    /* Optional: styling the buttons to look like Spotify's UI */
+    .action-cell button {
+        background: transparent;
+        color: #b3b3b3;
+        border: 1px solid #b3b3b3;
+        border-radius: 4px;
+        padding: 6px 10px;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    .action-cell button:hover {
+        color: white;
+        border-color: white;
+    }
+
+
+    .confirm-cancel-wrapper{
+        background-color: rgba(35, 35, 35, 0.25);
+
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px); 
+
+        z-index: 99;
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100vw;
+        height: 100vh;
+
+        display: flex;
+        align-content: center;
+        justify-content: center;
     }
 
     .confirm-cancel{
-        position: absolute;
         padding: 20px;
-        
         margin: auto;
 
-        right: 0;
-        left: 0;
-        top: 0;
         bottom: 0;
         width: fit-content;
         height: fit-content;
+        max-width: 80vw;
 
-        background-color: rgb(0, 4, 255);
+        background-color: rgba(26, 26, 26, 0.8); 
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px); 
+        border-radius: 20px;
+        border: 2px solid #1ed760;
+
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        z-index: 999;
     }
 
+    .uuid-text{
+        font-size: 8px;
+        margin-bottom: 10px;
+    }
+
+    .popup-header{
+        margin-bottom: 2px
+    }
+
+    .button-div{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .overlay-button{
+        margin: 6px;
+        margin-left: 3vw;
+        margin-right: 3vw;
+
+        border-radius: 4px;
+        background: transparent;
+        color: #b3b3b3;
+        border: 1px solid #b3b3b3;
+        border-radius: 4px;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    .overlay-button:hover{
+        color: white;
+        border-color: white;
+    }
+
+
+
+
+    .create-button{
+        background: transparent;
+        color: #b3b3b3;
+        border: 1px solid #b3b3b3;
+        border-radius: 4px;
+        padding: 6px 5vw;
+        cursor: pointer;
+        font-size: 0.8rem;
+
+        margin-top: 2vh
+    }
+    .create-button:hover {
+        color: white;
+        border-color: white;
+    }
 
 
 

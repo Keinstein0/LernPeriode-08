@@ -29,6 +29,8 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
       - ASPNETCORE_ENVIRONMENT=Development
+      - SUPERUSER_NAME=${SUPERUSER_NAME}
+      - SUPERUSER_PWD=${SUPERUSER_PWD}
     ports:
       - "${BACKEND_PORT}:8080"
     healthcheck:
@@ -41,6 +43,8 @@ services:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
+      args:
+        - PUBLIC_API_BASE_URL=${PUBLIC_API_BASE_URL}
     container_name: music_ui
     depends_on:
       backend:

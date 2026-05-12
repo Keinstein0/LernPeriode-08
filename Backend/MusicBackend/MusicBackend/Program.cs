@@ -15,12 +15,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Env.Load("../../../.env");
+/*Env.Load("../../../.env");
 if (!File.Exists("../../../.env"))
 {
     throw new Exception(".env not found");
 }
-var f = File.ReadAllText("../../../.env");
+var f = File.ReadAllText("../../../.env");*/
 
 
 
@@ -43,12 +43,20 @@ builder.Services.AddCors(options =>
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
+    options.AddPolicy("PublicSvelte",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:8080")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
 });
 
 
 
-var connectionString = builder.Configuration.GetConnectionString("DebugConnection");
-var serverVersion = ServerVersion.AutoDetect(connectionString);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 31));
 
 builder.Services.AddDbContext<MusicContext>(options =>
 {
@@ -126,8 +134,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<MusicContext>();
-    dbContext.Database.Migrate(); // Apply all migrations
 
+    dbContext.Database.Migrate(); // Apply all migrations
 }
 
 if (app.Environment.IsDevelopment())
@@ -138,7 +146,7 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseRouting();
-app.UseCors("AllowSvelte");
+app.UseCors("PublicSvelte");
 
 
 // Configure the HTTP request pipeline.
