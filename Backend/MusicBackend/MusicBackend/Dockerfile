@@ -45,3 +45,27 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 ENTRYPOINT ["dotnet", "MusicBackend.dll"]
+
+
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
+
+USER root
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    ffmpeg \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
+    -o /usr/local/bin/yt-dlp && chmod a+rx /usr/local/bin/yt-dlp
+
+WORKDIR /src
+
+COPY MusicBackend.csproj ./
+RUN dotnet restore
+
+COPY . .
+
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]

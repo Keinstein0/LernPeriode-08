@@ -77,7 +77,7 @@
     flex-direction: column;
     height: 100dvh;
     width: 100%;
-    background-color: black;
+    background-color: rgb(0, 0, 0);
   }
 
   .content {
